@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import arweave from '../../arweave-config';
+import settings from '../../app-config';
+import Document from '../Documents/Document';
 
 class Dashboard extends Component {
 
@@ -14,38 +17,61 @@ class Dashboard extends Component {
     measure_enabled: false,
     exchange: 'binance',
     account: null,
+    documents: []
   }
 
   componentDidMount() {
+    this.getLatestDocuments();
+  }
 
+  async getLatestDocuments() {
+    const txids = await arweave.arql({
+        op: "equals",
+        expr1: "app",
+        expr2: settings.APP_TAG
+    });
+
+    const that = this;
+    const documents = [];
+
+    for(let i in txids) {
+        const txid = txids[i];
+        
+        arweave.transactions.get(txid).then(transaction => {
+            const tags = transaction.get('tags');
+            
+            const doc = {txid: txid};
+
+            for(let i in tags) {
+                const tag = tags[i];
+                
+                const name = tag.get('name', {decode: true, string: true});
+                let value = tag.get('value', {decode: true, string: true});
+
+                if(name === "created") {
+                    value = parseInt(value);
+                }
+
+                doc[name] = value;
+            };
+
+            documents.push(doc);
+
+
+        }).finally(() => {     
+            const final_documents = documents.sort((a, b) => a.created > b.created);
+            that.setState({documents: final_documents});
+        });
+    }   
   }
 
   render() {
     let latest_articles = [<span>Loading Latest Articles ...</span>];
+    let documents = [];
 
-    if(this.props.latest_articles.length > 0) {
-        latest_articles = this.props.latest_articles.map((article) => {
-            return (<>
-                <div className="col-xs-2 col-sm-1">
-                    <time datetime="2014-06-29" className="datebox">
-                        <strong>Jun</strong>
-                        <span>29</span>
-                    </time>
-                </div>
-
-                <div className="col-xs-10 col-sm-11">
-                    <h6><a href="page-sidebar.html">Lorem ipsum dolor sit amet</a></h6>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod 
-                        tincidunt laoreet dolore magna aliquam tincidunt erat volutpat laoreet dolore magna aliquam 
-                        tincidunt erat volutpat.
-                    </p>
-                </div>
-                <div className="col-sm-12">
-                    <hr className="half-margins" />
-                </div>
-                
-            </>);
+    if(this.state.documents.length > 0) {
+        documents = this.state.documents.map((doc) => {
+            return <Document document={doc} key={doc.txid} />;            
         });
     }
 
@@ -62,7 +88,7 @@ class Dashboard extends Component {
                 </header>
                 <div className="panel-body noradius padding-10">
                     <div className="row profile-activity">
-                        {latest_articles}
+                        {documents}
                     </div>
                 </div>
             </section>

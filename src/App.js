@@ -7,6 +7,7 @@ import Login from './components/auth/Login';
 import Logout from './components/auth/Logout';
 import Dashboard from './containers/Dashboard/Dashboard';
 import Documents from './containers/Documents/Documents';
+import DocumentDetail from './containers/Documents/DocumentDetail';
 import UploaderPage from './components/Uploader/UploaderPage';
 import arweave from './arweave-config';
 import './App.css';
@@ -18,8 +19,7 @@ class App extends Component {
     contentToggled: false,
     contentStyle: null,
     balance: 0,
-    wallet_address: null,
-    latest_articles: [1,2,3]
+    wallet_address: null
   }
 
   constructor(props) {
@@ -41,7 +41,7 @@ class App extends Component {
     this.setState({contentToggled: true, contentStyle: {marginLeft: '0px'}});
   }
 
-  componentWillMount() {    
+  componentDidMount() {
     const wallet_address = sessionStorage.getItem('AR_Wallet', null);
     const jwk = JSON.parse(sessionStorage.getItem('AR_jwk', null));  
     
@@ -49,10 +49,7 @@ class App extends Component {
       this.setState({isAuthenticated: true, wallet_address: wallet_address, jwk: jwk});
       this.loadWallet(wallet_address);
     }
-    
-  }
 
-  componentDidMount() {
     const isAuthenticated = sessionStorage.getItem('isAuthenticated');
 
     this.setState({isAuthenticated: isAuthenticated === 'true' ? true : false});
@@ -144,9 +141,12 @@ class App extends Component {
     );
 
     let routes = [
-      <Route key='dash' path="/" exact component={() => <Dashboard latest_articles={this.state.latest_articles} />} />,
-      <Route key='documents' path="/documents" exact component={() => <Documents wallet_address={this.state.wallet_address} />} />,
-      <Route key='upload' path="/upload-document" exact component={() => <UploaderPage wallet_address={this.state.wallet_address} />} />,
+      <Route key='dash' path="/" exact component={() => <Dashboard wallet_address={this.state.wallet_address} jwk={this.state.jwk} />} />,
+      <Route key='documents' path="/documents" exact component={() => <Documents wallet_address={this.state.wallet_address} jwk={this.state.jwk}  />} />,
+      <Route key='document-detail' name='document-detail' path="/document/:txid" exact component={() => <DocumentDetail wallet_address={this.state.wallet_address} jwk={this.state.jwk}  />} />,
+      <Route key='upload' path="/upload-document" exact 
+        component={() => <UploaderPage wallet_address={this.state.wallet_address} jwk={this.state.jwk} addErrorAlert={this.addErrorAlert} addSuccessAlert={this.addSuccessAlert} />} 
+      />,
       <Route key='logout' path="/logout" exact component={() => <Logout onLogout={this.disconnectWallet.bind(this)} explandContentArea={() => this.explandContentArea} />} />
     ];
 

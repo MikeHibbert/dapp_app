@@ -18,7 +18,7 @@ arweave_config = {
     port: 443,           // Port, defaults to 1984
     protocol: 'https',  // Network protocol http or https, defaults to http
     timeout: 200000,     // Network request timeouts in milliseconds
-    logging: false,     // Enable network request logging
+    logging: false     // Enable network request logging
 }
 
 const arweave = Arweave.init(arweave_config);
