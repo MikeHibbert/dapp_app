@@ -12,6 +12,7 @@ import UploaderPage from './components/Uploader/UploaderPage';
 import arweave from './arweave-config';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
+import Search from './components/search/Search';
 
 class App extends Component {
   state = {
@@ -124,7 +125,7 @@ class App extends Component {
 
   render() {
     let header = (
-      <>
+      <div>
       <aside id="aside">
         <Menu {...this.props}/>
       </aside>
@@ -137,13 +138,14 @@ class App extends Component {
           onToggleContenArea={this.toggleContent.bind(this)}
           />
       </header>
-      </>
+      </div>
     );
 
     let routes = [
       <Route key='dash' path="/" exact component={() => <Dashboard wallet_address={this.state.wallet_address} jwk={this.state.jwk} />} />,
       <Route key='documents' path="/documents" exact component={() => <Documents wallet_address={this.state.wallet_address} jwk={this.state.jwk}  />} />,
-      <Route key='document-detail' name='document-detail' path="/document/:txid" exact component={() => <DocumentDetail wallet_address={this.state.wallet_address} jwk={this.state.jwk}  />} />,
+      <Route key='search' path="/search" exact component={() => <Search wallet_address={this.state.wallet_address} jwk={this.state.jwk}  />} />,
+      <Route key='document-detail' name='document-detail' path="/document/:txid" exact component={DocumentDetail} />,
       <Route key='upload' path="/upload-document" exact 
         component={() => <UploaderPage wallet_address={this.state.wallet_address} jwk={this.state.jwk} addErrorAlert={this.addErrorAlert} addSuccessAlert={this.addSuccessAlert} />} 
       />,

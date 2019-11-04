@@ -12,7 +12,7 @@ class Document extends Component {
         }
         return (<div key={this.props.document.txid}>
             <div className="col-xs-2 col-sm-1">
-                <time dateTime="2014-06-29" className="datebox">
+                <time dateTime={mdate.format('YYYY-MM-DD')} className="datebox">
                     <strong>{mdate.format('MMM')}</strong>
                     <span>{mdate.format('DD')}</span>
                 </time>
@@ -21,7 +21,7 @@ class Document extends Component {
             <div className="col-xs-10 col-sm-11">
                 <h6><Link to={link_obj}>{this.props.document.title}</Link></h6>
                 
-                <p>
+                <p className="margin-right-20">
                     <strong>File: {this.props.document.filename}</strong><br /><br />
                     <strong>Description: </strong><br />
                     {this.props.document.description}

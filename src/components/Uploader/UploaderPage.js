@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import arweave from '../../arweave-config';
 import settings from '../../app-config';
+import { Redirect } from 'react-router';
 
 class UploaderPage extends Component {
     state = {
@@ -8,7 +9,8 @@ class UploaderPage extends Component {
         description: "",
         document: null,
         yesNo: true,
-        owner: true
+        owner: true,
+        redirect: false
     }
 
     constructor(prefs) {
@@ -47,8 +49,6 @@ class UploaderPage extends Component {
             default:
                 value = event.target.value;
         }
-
-        console.log(event.target);
         
         const state = {};
         state[input_name] = value;
@@ -86,8 +86,6 @@ class UploaderPage extends Component {
         reader.onload = async function() {
             const file_data = new Uint8Array(reader.result)
 
-            debugger;
-
             let transaction = await arweave.createTransaction({
                 data: file_data
             }, that.props.jwk);
@@ -103,7 +101,12 @@ class UploaderPage extends Component {
             const response = await arweave.transactions.post(transaction);
 
             if(response.status === 200) {
-                that.props.addSuccessAlert("Your document were successfully saved!");
+                that.props.addSuccessAlert("Your document were successfully saved and will be mined shortly.");
+
+                that.addToPendingTransactions(transaction.id);
+
+                that.setState({redirect: true});
+
             } else if (response.status === 400) {
                 that.props.addErrorAlert("There was a problem saving your document.");
                 console.log("Invalid transaction!");
@@ -114,6 +117,19 @@ class UploaderPage extends Component {
             
         }
         reader.readAsArrayBuffer(this.state.document);
+    }
+
+    addToPendingTransactions(txid) {
+        let pending_txids = JSON.parse(sessionStorage.getItem('pending_txids'));
+
+        if(!pending_txids) {
+            pending_txids = [];
+        }
+
+        pending_txids.push(txid);
+
+        sessionStorage.removeItem('pending_txids');
+        sessionStorage.setItem('pending_txids', JSON.stringify(pending_txids));
     }
 
     toggleYesNo() {
@@ -129,6 +145,10 @@ class UploaderPage extends Component {
     }
 
     render() {
+        if(this.state.redirect) {
+            return <Redirect to="/documents" />;
+        }
+
         const yesNoChecked = this.state.yesNo === true ? "'checked'" : "";
         const charCount = 1024 - this.state.description.length;
 
@@ -148,6 +168,7 @@ class UploaderPage extends Component {
                     <input className="custom-file-upload custom-file-upload-hidden" 
                         ref="filename"
                         type="file" id="document" name="document" tabIndex="-1" 
+                        accept=".doc,.docx,.pdf"
                         style={{position: "absolute", left: "-9999px"}}
                         onChange={(e) => this.onChange(e)}
                          />
@@ -206,7 +227,7 @@ class UploaderPage extends Component {
             <header id="page-header">
                 <h1>Upload</h1>
             </header>
-            <div className="col-md-8 padding-20">
+            <div className="col-md-6 padding-20">
                 <section className="panel panel-default">
                     <header className="panel-heading">
                         <h2 className="panel-title elipsis">

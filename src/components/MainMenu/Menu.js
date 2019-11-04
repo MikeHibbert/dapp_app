@@ -10,6 +10,7 @@ class Menu extends Component {
             <ul className="nav nav-list">
               <MenuItem icon='dashboard' name='Dashboard' url='/' {...this.props}/>
               <MenuItem icon='book' name='My Documents' url='/documents' {...this.props}/>
+              <MenuItem icon='search' name='Search' url='/search' {...this.props}/>
             </ul>
         </nav>
         <span id="asidebg"></span>

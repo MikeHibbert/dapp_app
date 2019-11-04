@@ -1,5 +1,5 @@
 const settings = {
-    APP_TAG : 'arweave-dapp_app'
+    APP_TAG : 'arweave-dapp_app_v1.2'
 
 };
 

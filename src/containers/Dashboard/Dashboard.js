@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import arweave from '../../arweave-config';
 import settings from '../../app-config';
 import Document from '../Documents/Document';
+import checkPendingTransactions from '../../helpers';
+
 
 class Dashboard extends Component {
 
@@ -20,11 +22,7 @@ class Dashboard extends Component {
     documents: []
   }
 
-  componentDidMount() {
-    this.getLatestDocuments();
-  }
-
-  async getLatestDocuments() {
+  async componentDidMount() {
     const txids = await arweave.arql({
         op: "equals",
         expr1: "app",
@@ -57,13 +55,12 @@ class Dashboard extends Component {
 
             documents.push(doc);
 
-
-        }).finally(() => {     
+        }).finally((response) => {    
             const final_documents = documents.sort((a, b) => a.created > b.created);
             that.setState({documents: final_documents});
         });
     }   
-  }
+  }  
 
   render() {
     let latest_articles = [<span>Loading Latest Articles ...</span>];
@@ -79,7 +76,7 @@ class Dashboard extends Component {
         <header id="page-header">
             <h1>Dashboard</h1>
         </header>
-        <div className="col-md-8 padding-20">
+        <div className="col-md-6 padding-20">
             <section className="panel panel-default">
                 <header className="panel-heading">
                     <h2 className="panel-title elipsis">

@@ -225,11 +225,12 @@ body.boxed #asidebg {
 		margin-left:6px;
 		margin-right:3px;
 	}
-	#header img.user-avatar {
+	#header div.user-avatar {
 		display:inline-block;
 		margin-right:10px;
 		margin:7px;
 		border:#999 1px solid;
+		font-size: 22px;
 	}
 
 	#header .logo {
@@ -237,8 +238,12 @@ body.boxed #asidebg {
 		height:50px;
 		width:100%;
 		max-width:170px;
-		line-height:40px;
-		margin-left:15px;
+		line-height:20px;
+		margin-left:10px;
+		margin-right:10px;
+		margin-top: 5px;
+		color: #fff;
+		font-weight: bold;
 	}
 	
 	#header .logo img {

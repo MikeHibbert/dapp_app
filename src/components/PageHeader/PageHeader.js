@@ -33,9 +33,8 @@ class PageHeader extends Component {
         <>
         <button id="mobileMenuBtn" onClick={this.handleMobileToggle.bind(this)}></button>
         <span className="logo pull-left">
-					<img src="/images/logo_light.png" alt="admin panel" width="150" />
+					Decentralized Academic Publishing Portal
 				</span>
-        <Search />
         <UserMenu 
             wallet_address={this.props.wallet_address} 
             history={this.props.history} 

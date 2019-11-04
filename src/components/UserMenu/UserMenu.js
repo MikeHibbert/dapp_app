@@ -50,6 +50,9 @@ class UserMenu extends Component {
                     <li className={this.state.navClasses.join(' ')}>
 
                             <a onClick={this.handleMenuToggle.bind(this)}  className="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                    <div className="user-avatar" alt="" src="assets/images/noavatar.jpg" height="34" >
+                                      <i className="fa fa-user"></i>
+                                    </div>
                                     <span className="user-name" style={{lineHeight: "48px", paddingLeft: "10px"}}>
                                             <span onClick={this.handleMenuToggle.bind(this)}  className="hidden-xs">
                                                     {this.props.wallet_address} <i className="fa fa-angle-down"></i>

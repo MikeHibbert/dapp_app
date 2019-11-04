@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import arweave from '../../arweave-config';
 import settings from '../../app-config';
 import Document from './Document';
+import checkPendingTransactions from '../../helpers';
+
 
 class Documents extends Component {
 
   state = {
     documents: [],
+    pending_count: 0,
     loading: false
   }
 
@@ -59,9 +62,18 @@ class Documents extends Component {
 
         }).finally(() => {     
             const final_documents = documents.sort((a, b) => a.created > b.created);
+
             that.setState({documents: final_documents});
         });
     }   
+
+    const pending_document_ids = checkPendingTransactions(this.setPendingCount.bind(this));
+
+    
+  }
+
+  setPendingCount(count) {
+    this.setState({pending_count: count});
   }
 
   render() {
@@ -73,21 +85,27 @@ class Documents extends Component {
 
     if(this.state.documents.length > 0) {
         documents = this.state.documents.map((doc) => {
-            return <Document document={doc} />;            
+            return <Document key={doc.txid} document={doc} />;            
         });
+    }
+
+    let pending_count = null;
+    if(this.state.pending_count > 0) {
+        pending_count = <span><small> ({this.state.pending_count} pending.)</small></span>;
     }
 
     return ( <>
     <header id="page-header">
-        <h1>Dashboard</h1>
+        <h1>Documents</h1>
     </header>
-    <div className="col-md-8 padding-20">
+    <div className="col-md-6 padding-20">
         <section className="panel panel-default">
             <div className="panel-heading">
                 <span className="panel-title elipsis">
-                    <i className="fa fa-rss"></i> Published Documents
+                    <i className="fa fa-rss"></i> Published Documents {pending_count}
                 </span>
                 <ul className="options pull-right relative list-unstyled">
+                    
                     <li><Link to={"/upload-document"} className="btn btn-primary btn-xs white"><i className="fa fa-plus"></i> Upload</Link></li>
                 </ul>
             </div>
